@@ -8,7 +8,7 @@
   "servers": [
     {
       "url": "https://task-bot.onrender.com",
-      "description": "Local server"
+      "description": "Web server"
     }
   ],
   "tags": [
