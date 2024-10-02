@@ -1,0 +1,365 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Kwizbot API",
+    "version": "1.0.0",
+    "description": "API для взаємодії з Kwizbot, включаючи роботу з користувачами та замовленнями."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "Local server"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Auth",
+      "description": "Authorization endpoints"
+    },
+    {
+      "name": "Action",
+      "description": "Action endpoints"
+    }
+  ],
+  "paths": {
+    "/api/auth/start": {
+      "get": {
+        "tags": ["Auth"],
+        "summary": "Запустити бота",
+        "responses": {
+          "200": {
+            "description": "Відповідь від бота",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Доброго дня, вас вітає Kwizbot!"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/action/info-company": {
+      "get": {
+        "tags": ["Action"],
+        "parameters": [
+          {
+            "name": "phone",
+            "in": "query",
+            "description": "Номер телефону для авторизації",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "summary": "Отримати інформацію про компанію",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Інформація про компанію",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/action/orders": {
+      "get": {
+        "tags": ["Action"],
+        "parameters": [
+          {
+            "name": "phone",
+            "in": "query",
+            "description": "Номер телефону для авторизації",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "summary": "Отримати останні 5 замовлень користувача",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Список замовлень",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "orders": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "order_id": {
+                            "type": "string"
+                          },
+                          "state": {
+                            "type": "string"
+                          },
+                          "amount": {
+                            "type": "string"
+                          },
+                          "owner": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Orders not found"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/auth/add-phone": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Додати номер телефону",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddPhone"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Відповідь з користувачем або запит на ім'я",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "user": {
+                      "type": "object",
+                      "properties": {
+                        "full_name": {
+                          "type": "string"
+                        },
+                        "phone": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/add-name": {
+      "post": {
+        "tags": ["Auth"],
+        "parameters": [
+          {
+            "name": "phone",
+            "in": "query",
+            "description": "Номер телефону для авторизації",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "summary": "Додати ім'я",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddName"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Запит на додавання міста",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "The user already has a name"
+          }
+        }
+      }
+    },
+    "/api/auth/add-city": {
+      "post": {
+        "tags": ["Auth"],
+        "parameters": [
+          {
+            "name": "phone",
+            "in": "query",
+            "description": "Номер телефону для авторизації",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "summary": "Додати місто",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddCity"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Запит на допомогу",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "user": {
+                      "type": "object",
+                      "properties": {
+                        "full_name": {
+                          "type": "string"
+                        },
+                        "city": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "The user already has a city"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AddPhone": {
+        "type": "object",
+        "required": ["phone"],
+        "properties": {
+          "phone": {
+            "type": "string",
+            "description": "Phone number",
+            "example": "0123456789",
+            "minLength": 10
+          }
+        }
+      },
+      "AddName": {
+        "type": "object",
+        "required": ["full_name"],
+        "properties": {
+          "full_name": {
+            "type": "string",
+            "description": "First name, second name",
+            "example": "Andrii Lupin"
+          }
+        }
+      },
+      "AddCity": {
+        "type": "object",
+        "required": ["city"],
+        "properties": {
+          "city": {
+            "type": "string",
+            "description": "Місце проживання",
+            "example": "Lviv"
+          }
+        }
+      },
+      "Orders": {
+        "type": "object",
+        "required": ["city"],
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "індитифікатор для MongoBD",
+            "example": "659e80898d8f007f26da900f"
+          },
+          "order_id": {
+            "type": "string",
+            "description": "Унікальний індитифікатор замовлення",
+            "example": "Lviv"
+          },
+          "state": {
+            "type": "string",
+            "description": "Статус замовлення"
+          },
+          "amount": {
+            "type": "string",
+            "description": "Сума замовлення"
+          }
+        }
+      }
+    }
+  }
+}
