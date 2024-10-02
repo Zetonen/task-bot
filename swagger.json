@@ -114,29 +114,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "orders": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "order_id": {
-                            "type": "string"
-                          },
-                          "state": {
-                            "type": "string"
-                          },
-                          "amount": {
-                            "type": "string"
-                          },
-                          "owner": {
-                            "type": "string"
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/GetOrders"
                 }
               }
             }
@@ -336,28 +314,35 @@
           }
         }
       },
-      "Orders": {
+      "Order": {
         "type": "object",
-        "required": ["city"],
+        "required": ["order_id", "state", "amount"],
         "properties": {
-          "_id": {
-            "type": "string",
-            "description": "індитифікатор для MongoBD",
-            "example": "659e80898d8f007f26da900f"
-          },
           "order_id": {
             "type": "string",
             "description": "Унікальний індитифікатор замовлення",
-            "example": "Lviv"
+            "example": "659e80898d8f007f26da900f"
           },
           "state": {
             "type": "string",
-            "description": "Статус замовлення"
+            "description": "Статус замовлення",
+            "example": "Очікуємо підтвердження"
           },
           "amount": {
             "type": "string",
-            "description": "Сума замовлення"
+            "description": "усма замовлення",
+            "example": "1000"
           }
+        }
+      },
+      "Orders": {
+        "type": "array",
+        "items": { "$ref": "#/components/schemas/Order" }
+      },
+      "GetOrders": {
+        "type": "object",
+        "properties": {
+          "orders": { "$ref": "#/components/schemas/Orders" }
         }
       }
     }
